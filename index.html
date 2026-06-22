@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SafeYou — a short set of questions to finish the platform plan.">
+<title>SafeYou — Questions for You</title>
+<style>
+  :root{
+    --ground:#EEF2F6; --surface:#FFFFFF; --ink:#14253A; --ink-soft:#4A5C70;
+    --line:#D5DEE7; --line-soft:#E4EBF1;
+    --accent:#2E74B5; --accent-deep:#1F3A5F;
+    --ok:#0E8A6F; --ok-bg:#E2F3EE;
+    --amber:#B8730E; --amber-bg:#FBF0DC;
+    --blue:#2E74B5; --blue-bg:#E6EFF7;
+    --mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+    font-size:16px;line-height:1.6;overflow-x:hidden;}
+  h1,h2,h3,h4{margin:0;line-height:1.18;}
+
+  /* ---- sticky toolbar ---- */
+  .bar{position:sticky;top:0;z-index:50;background:rgba(20,37,58,.97);
+    color:#fff;display:flex;align-items:center;gap:16px;
+    padding:11px 22px;border-bottom:1px solid rgba(255,255,255,.08);}
+  .bar .brand{font-weight:800;font-size:15px;display:flex;align-items:center;gap:9px;}
+  .bar .brand .shield{width:22px;height:22px;flex:none;}
+  .bar .mini{flex:none;display:flex;align-items:center;gap:10px;margin-left:auto;}
+  .bar .minibar{width:140px;height:8px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden;}
+  .bar .minibar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),#5fd3b6);
+    border-radius:99px;transition:width .5s cubic-bezier(.2,.7,.2,1);}
+  .bar .minipct{font-size:14px;font-weight:700;min-width:42px;text-align:right;}
+  .btn{font-family:var(--sans);font-size:13px;font-weight:600;border-radius:9px;
+    padding:8px 14px;border:1px solid transparent;cursor:pointer;white-space:nowrap;}
+  .btn-primary{background:#3a9b82;color:#fff;}
+  .btn-primary:hover{background:#43ab90;}
+  .btn-ghost{background:transparent;color:#cfe0f0;border-color:rgba(255,255,255,.22);}
+  .btn-ghost:hover{background:rgba(255,255,255,.08);}
+
+  /* ---- hero ---- */
+  .hero{background:radial-gradient(120% 140% at 88% -10%,#265a8a 0%,transparent 55%),
+      linear-gradient(160deg,#1F3A5F 0%,#14253A 78%);color:#eaf1f8;padding:42px 22px 40px;}
+  .hero-wrap{max-width:1000px;margin:0 auto;}
+  .hero h1{font-size:36px;font-weight:800;margin-bottom:16px;letter-spacing:-.02em;}
+  .hero p{color:#c2d2e1;max-width:64ch;font-size:17px;}
+  .hero p b{color:#fff;}
+  .hero .how{margin-top:24px;display:flex;flex-wrap:wrap;gap:10px 26px;font-size:14.5px;color:#9fc0dc;}
+  .hero .how span{display:flex;align-items:center;gap:9px;}
+  .hero .how b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;
+    background:rgba(255,255,255,.12);color:#fff;font-size:13px;font-weight:700;flex:none;}
+
+  /* ---- layout ---- */
+  .shell{max-width:1000px;margin:0 auto;padding:0 22px 90px;
+    display:grid;grid-template-columns:228px 1fr;gap:36px;align-items:start;}
+  nav.toc{position:sticky;top:66px;align-self:start;padding-top:30px;}
+  nav.toc .tt{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--ink-soft);margin-bottom:12px;padding-left:12px;}
+  nav.toc a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink-soft);
+    font-size:14px;font-weight:500;padding:8px 12px;border-radius:9px;border-left:2px solid transparent;}
+  nav.toc a:hover{background:#e3eaf1;color:var(--ink);}
+  nav.toc a.active{color:var(--ink);font-weight:700;border-left-color:var(--accent);background:#e3eaf1;}
+  nav.toc a .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--amber);}
+  nav.toc a .dot.done{background:var(--ok);}
+  nav.toc a .frac{margin-left:auto;font-size:11.5px;color:#8493a3;font-variant-numeric:tabular-nums;}
+
+  main{padding-top:30px;min-width:0;}
+  .sec{margin-bottom:48px;scroll-margin-top:66px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px;}
+  .sec-head .n{font-size:14px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;}
+  .sec-head h2{font-size:25px;font-weight:800;letter-spacing:-.02em;}
+  .sec-blurb{color:var(--ink-soft);margin-bottom:22px;max-width:72ch;font-size:15.5px;}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 24px;margin-bottom:18px;box-shadow:0 1px 2px rgba(20,37,58,.04);}
+  .card.done{border-color:#bfe2d7;background:#fafdfc;}
+  .card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+  .card-top .q{font-weight:800;font-size:18px;flex:1;min-width:0;letter-spacing:-.01em;}
+  .card .ref{font-size:11.5px;color:#9aa9b8;font-weight:600;white-space:nowrap;padding-top:3px;}
+
+  .chip{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    padding:4px 10px;border-radius:7px;white-space:nowrap;flex:none;}
+  .chip.confirm{background:var(--ok-bg);color:var(--ok);}
+  .chip.input{background:var(--amber-bg);color:var(--amber);}
+  .chip.check{background:var(--blue-bg);color:var(--blue);}
+  .chip.model{background:#e6eff7;color:var(--accent);}
+
+  .found{background:#f4f8fb;border:1px solid var(--line-soft);border-left:3px solid var(--accent);
+    border-radius:9px;padding:12px 15px;margin:6px 0 12px;font-size:14.5px;color:var(--ink-soft);}
+  .found b{color:var(--ink);}
+  .found .ttl{display:block;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:4px;}
+  .ask{font-size:15.5px;margin:4px 0 6px;}
+
+  .help{background:var(--amber-bg);border-radius:9px;padding:11px 15px;margin:10px 0 4px;
+    font-size:14px;color:#6b4a0e;}
+  .help .ttl{font-weight:800;color:var(--amber);}
+
+  label.fl{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin:12px 0 5px;}
+  textarea,input[type=text]{width:100%;font-family:var(--sans);font-size:15px;color:var(--ink);
+    background:#fbfdfe;border:1px solid var(--line);border-radius:10px;padding:11px 13px;resize:vertical;}
+  textarea{min-height:74px;line-height:1.55;}
+  textarea.tall{min-height:150px;}
+  textarea:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent);}
+
+  .decide{display:flex;flex-wrap:wrap;gap:9px;margin:6px 0;}
+  .opt{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:600;
+    border:1px solid var(--line);border-radius:10px;padding:9px 15px;cursor:pointer;background:#fbfdfe;}
+  .opt:hover{border-color:var(--accent);}
+  .opt input{accent-color:var(--ok);width:16px;height:16px;}
+  .opt.sel-ok{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);}
+  .opt.sel-fix{border-color:var(--amber);background:var(--amber-bg);color:var(--amber);}
+
+  .metric-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1.3fr;gap:12px;
+    align-items:end;padding:13px 0;border-top:1px solid var(--line-soft);}
+  .metric-row:first-of-type{border-top:none;}
+  .metric-row .mname{align-self:start;padding-top:2px;}
+  .metric-row .mname b{font-weight:800;font-size:14.5px;display:block;}
+  .metric-row .mname span{font-size:12.5px;color:var(--ink-soft);}
+  .metric-row label.fl{margin:0 0 4px;}
+
+  details.more > summary{cursor:pointer;font-size:13.5px;font-weight:700;color:var(--accent);
+    list-style:none;padding:3px 0;}
+  details.more > summary::-webkit-details-marker{display:none;}
+  details.more > summary::before{content:"▸ ";}
+  details.more[open] > summary::before{content:"▾ ";}
+
+  .techbox{background:#eef2f6;border:1px dashed #c3d0dc;border-radius:12px;padding:16px 20px;margin-top:8px;}
+  .techbox p{font-size:14px;color:var(--ink-soft);margin:0 0 8px;}
+  .techbox ul{margin:0;padding-left:20px;font-size:14px;color:var(--ink-soft);}
+  .techbox li{margin:3px 0;}
+
+  .savetag{position:fixed;bottom:18px;right:18px;background:var(--ink);color:#dff;
+    font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:9px;
+    opacity:0;transform:translateY(8px);transition:.3s;pointer-events:none;z-index:60;}
+  .savetag.show{opacity:1;transform:none;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:20px;font-size:13px;color:#9db3ca;}
+  .legend span{display:flex;align-items:center;gap:7px;}
+  .legend i{width:10px;height:10px;border-radius:3px;display:inline-block;}
+
+  @media (max-width:840px){
+    .shell{grid-template-columns:1fr;}
+    nav.toc{display:none;}
+    .metric-row{grid-template-columns:1fr;gap:6px;}
+    .bar .brand span.full{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="brand">
+    <svg class="shield" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z" fill="#54D0B0" opacity=".22"/><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5l-8-3Z" stroke="#54D0B0" stroke-width="1.4"/><path d="m8.5 12 2.4 2.4 4.6-4.8" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="full">SafeYou&nbsp;·&nbsp;</span>Questions for You
+  </div>
+  <div class="mini">
+    <div class="minibar"><i id="miniFill"></i></div>
+    <span class="minipct" id="miniPct">0%</span>
+    <button class="btn btn-ghost" id="btnReset">Start over</button>
+    <button class="btn btn-primary" id="btnMd">Send us your answers</button>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="hero-wrap">
+    <h1>A few questions to finish the SafeYou plan.</h1>
+    <p>We reviewed SafeYou and have some things to check with you. <b>Most are quick</b> — for many we already looked at how your app works today and just need a <b>yes / no</b>. A few need your input as the people who know your users and programme best. <b>Every question has an example</b> so you can see the kind of answer we're looking for. Your answers save automatically in this browser; when you're done, click <b>“Send us your answers.”</b></p>
+    <div class="how">
+      <span><b>1</b> Read what we found</span>
+      <span><b>2</b> Confirm it, or tell us what to change</span>
+      <span><b>3</b> Use the example to shape your answer</span>
+      <span><b>4</b> Click “Send us your answers”</span>
+    </div>
+    <div class="legend">
+      <span><i style="background:#0E8A6F"></i>We checked — please confirm</span>
+      <span><i style="background:#B8730E"></i>We need your input</span>
+      <span><i style="background:#2E74B5"></i>Quick check</span>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="toc" id="toc"><div class="tt">Sections</div></nav>
+  <main id="main"></main>
+</div>
+
+<div class="savetag" id="savetag">Saved</div>
+
+<script>
+"use strict";
+
+/* plain-language "how should this work?" template (replaces the engineering 8-field spec) */
+const FEATURE_SEED =
+`① What is the user trying to do?
+② The normal steps (what happens when it works well):
+③ If something goes wrong or isn't available (no internet, nothing to show, a mistake):
+④ Who is allowed to use this?`;
+
+const SOS_SEED =
+`① What is the user trying to do?  Get urgent help fast, and let trusted people know where they are.
+② The normal steps:  The user taps the Help button → the app notes where they are → it alerts their saved emergency contacts and the local support organization → a follow-up conversation opens so responders can stay in touch → the user sees confirmation that help was alerted.
+③ If something goes wrong:  No saved contacts → still alert the support organization. Location turned off → send the alert anyway and note the location is unknown. No internet → clearly tell the user it could not be sent and to call emergency services directly. Pressed twice → don't create a second, duplicate alert.
+④ Who is allowed to use this?  Any signed-in user can raise an alert; the support organization receives it and responds.`;
+
+const SECTIONS = [
+  {
+    id:"quick", num:"1", title:"Quick checks",
+    blurb:"Small things to confirm so the plan matches how your app actually works. Most are a quick yes or no.",
+    items:[
+      {id:"otp", type:"confirm", chip:"check", ref:"sign-up",
+        q:"How long should the text-message code stay valid?",
+        found:"When someone signs up, we text them a one-time code. In your app today it works for <b>60 seconds</b>; the plan document says 50. We just need the right number.",
+        ask:"Is 60 seconds right, or would you like a different length?",
+        help:"“60 seconds is fine.” — or — “Please make it 2 minutes; some users receive the SMS slowly.”"},
+      {id:"providers", type:"confirm", chip:"check", ref:"messaging",
+        q:"Confirm the text-message companies in each country",
+        found:"We send text messages through these partners: <b>Armenia — Nikita · Georgia — BiMsg · Iraq — Korek · USA, Poland, Romania, Estonia — Twilio.</b>",
+        ask:"Are these correct? (The plan used vaguer names like “local telecom”.)",
+        help:"“All correct.” — or — “In Georgia we now use [company], not BiMsg.”"},
+      {id:"reset", type:"confirm", chip:"check", ref:"safety",
+        q:"If a user resets their password, should all their devices be logged out?",
+        found:"Today, resetting a password does <b>not</b> log out other devices — old sign-ins keep working.",
+        ask:"For a safety app this matters: if an abuser had access to someone's account, a reset that also logs everyone out is safer. Should a reset log out all devices?",
+        help:"“Yes — a reset should log out everywhere.” (our recommendation) — or — “No, keep it as it is.”"},
+      {id:"oos", type:"text", chip:"input", ref:"scope",
+        q:"Finish the list of things SafeYou is NOT going to include",
+        ask:"The plan starts this list but it's cut off (“Landing page, digital safety tool, …”). List everything that is deliberately left out, so no one assumes it's included.",
+        help:"“Out of scope: the public marketing website; the separate online safety-checker tool; the survey-building tool, which is managed separately.”"},
+      {id:"roles", type:"text", chip:"input", ref:"users",
+        q:"Confirm the types of users and what each one can do",
+        found:"The plan lists 7 user types; the app today has 6. One type in the plan — “Contributor” — doesn't currently exist.",
+        ask:"Confirm the final list of user types, and in one line each, what they're allowed to do. Tell us whether “Contributor” should exist.",
+        help:"“End user: uses the app, raises alerts, joins forums. Consultant: answers users. Organization: receives alerts. Moderator: reviews content. Administrator: manages one country. Super administrator: full access including personal data. Drop ‘Contributor’.”", tall:true}
+    ]
+  },
+  {
+    id:"checked", num:"2", title:"We looked at your app — please confirm",
+    blurb:"These are areas where we checked how SafeYou works today. For each one, tell us if it's what you want, or what should change.",
+    items:[
+      {id:"push", type:"confirm", chip:"confirm", ref:"notifications",
+        q:"Pop-up notifications on phones",
+        found:"The app can show pop-up notifications on a user's phone — for example, a new message or an alert. These are delivered through Google's standard notification service.",
+        ask:"Is that fine, or do you have any requirement about how notifications appear?",
+        help:"“Fine as is.” — or — “For safety, notifications must never show message contents on the lock screen.”"},
+      {id:"maps", type:"confirm", chip:"confirm", ref:"location",
+        q:"Showing a user's location to responders",
+        found:"When an emergency alert is sent, the user's location is included as a Google Maps link in the message to responders. There is no live map inside the app itself.",
+        ask:"Is a map link enough, or do you need a live map view somewhere?",
+        help:"“A link is enough.” — or — “Responders need a live map inside the dashboard.”"},
+      {id:"storage", type:"confirm", chip:"confirm", ref:"files",
+        q:"Where audio recordings and photos are kept",
+        found:"Today these files are stored on the app's own server. There's an option to move them to dedicated cloud storage, which scales better and can be more secure.",
+        ask:"Keep them on the server, or move to cloud storage?",
+        help:"“Move recordings and photos to secure cloud storage.” — or — “Keep as-is for now.”"},
+      {id:"monitoring", type:"confirm", chip:"confirm", ref:"reliability",
+        q:"Automatic alerts when something breaks",
+        found:"Right now there's <b>no system that automatically warns your team when something fails</b> — which is risky for the emergency (SOS) features especially.",
+        ask:"Should we add automatic monitoring so failures are caught immediately? (We recommend yes.)",
+        help:"“Yes — add monitoring; the emergency path must never fail silently.” — or — “Not a priority for this phase.”"}
+    ]
+  },
+  {
+    id:"foundation", num:"3", title:"The bigger picture",
+    blurb:"A few things only you can tell us — about your users and what success looks like. These anchor the whole plan.",
+    items:[
+      {id:"problem", type:"text", chip:"input", ref:"purpose",
+        q:"The real-world problem SafeYou solves",
+        ask:"In a few sentences, describe the problem your users face — who they are, what they're going through, and why other options fall short.",
+        help:"Follow this shape — “Who: … / What they face: … / Today they have to: … / Which leads to: …”. For example: “Women experiencing domestic violence often can't safely call for help with an abuser nearby; they need a discreet way to alert trusted people instantly.”", tall:true},
+      {id:"personas", type:"text", chip:"input", ref:"users",
+        q:"Who uses SafeYou, and what they need",
+        ask:"Describe your 2–3 main types of users — their situation, what they want from the app, and what worries them.",
+        help:"For each user, fill in — “Who they are / What they want / What worries them / What ‘success’ looks like for them.” For example: “At-risk woman — wants help discreetly and fast — worries the app could be seen by an abuser — success is reaching help without being noticed.”", tall:true},
+      {id:"metrics", type:"metrics", chip:"input", ref:"success",
+        q:"How we'll know SafeYou is working",
+        ask:"For each measure, fill in what you can. If you don't have a number yet, write “to be measured”.",
+        rows:[
+          ["People using the app each month","roughly how many people use SafeYou in a typical month"],
+          ["Emergency alerts that get through","of all SOS alerts raised, how many actually reach someone"],
+          ["Users connected to help","how often someone who needs help actually reaches a consultant or service"],
+          ["Use of messaging & community","how much people use messaging and the community forums"],
+          ["People who keep using it","how many people keep using the app over time"],
+          ["How safe & useful it feels","how trusted and helpful the app feels to users"]
+        ]}
+    ]
+  },
+  {
+    id:"features", num:"4", title:"How each part should work",
+    blurb:"For each feature, tell us in plain words how it should work for your users. You don't need technical detail — just describe it the way you'd explain it to a colleague. The Help/SOS button is filled in as an example of the kind of answer we need.",
+    items:[
+      {id:"f_sos", type:"feature", chip:"model", ref:"Help / SOS", q:"Help button & emergency alerts (SOS)", seed:SOS_SEED},
+      {id:"f_followup", type:"feature", chip:"input", ref:"follow-up", q:"The follow-up conversation after an alert"},
+      {id:"f_audio", type:"feature", chip:"input", ref:"recordings", q:"Recording and saving audio"},
+      {id:"f_contacts", type:"feature", chip:"input", ref:"contacts", q:"Setting up emergency contacts"},
+      {id:"f_network", type:"feature", chip:"input", ref:"directory", q:"Finding support organizations"},
+      {id:"f_forums", type:"feature", chip:"input", ref:"community", q:"Community forums"},
+      {id:"f_msg", type:"feature", chip:"input", ref:"messaging", q:"Private messaging with consultants & organizations"},
+      {id:"f_hide", type:"feature", chip:"input", ref:"privacy", q:"Hiding the app & privacy controls"},
+      {id:"f_profile", type:"feature", chip:"input", ref:"profile", q:"Managing your profile"},
+      {id:"f_l10n", type:"feature", chip:"input", ref:"language", q:"Languages & per-country setup"},
+      {id:"f_notif", type:"feature", chip:"input", ref:"surveys", q:"Notifications & in-app surveys"},
+      {id:"d_dash", type:"feature", chip:"input", ref:"dashboard", q:"The organization dashboard (staff side)",
+        seed:`① What is the staff member trying to do?  (e.g. see new alerts, reply to users, manage content, view statistics)\n② The normal steps:\n③ If something goes wrong or there's nothing to show:\n④ Who is allowed to use this? (which staff roles, and what each can do)`}
+    ]
+  },
+  {
+    id:"safety", num:"5", title:"Safety, privacy & data",
+    blurb:"The most sensitive area for a safety product. We've put our recommendation on each — you confirm it, or tell us your policy.",
+    items:[
+      {id:"s_enc", type:"confirm", chip:"confirm", ref:"data",
+        q:"Protecting stored information",
+        found:"Our recommendation: <b>all sensitive information</b> — recordings, messages, and personal details — is scrambled (encrypted) while stored, so it's unreadable if a server is ever accessed improperly.",
+        ask:"Confirm we should do this, or note any specific requirement.",
+        help:"“Yes — encrypt all of it.” (recommended) — or — “Yes, and our funder also requires …”"},
+      {id:"s_pii", type:"confirm", chip:"confirm", ref:"privacy",
+        q:"Who can see users' personal details",
+        found:"Today, only the highest-level administrator can see users' personal details; everyone else works with limited information.",
+        ask:"Is that the right rule, or should access be even more restricted?",
+        help:"“That's correct.” — or — “Even the top admin should only see personal details when responding to an active alert.”"},
+      {id:"s_retention", type:"text", chip:"input", ref:"data",
+        q:"How long to keep recordings, locations and messages",
+        ask:"Tell us how long each type of data should be kept before it's automatically deleted or anonymised. This is often set by your policy or local law.",
+        help:"“Audio recordings: 90 days. Location from alerts: 1 year. Chat messages: kept until the user deletes their account.”", tall:true},
+      {id:"s_consent", type:"text", chip:"input", ref:"consent",
+        q:"What users agree to, and what they can control",
+        ask:"What must a user agree to when they sign up, and what control should they have over their own data (e.g. delete their account and data)?",
+        help:"“At sign-up users accept the terms and privacy policy. Users can delete their account and all their data at any time from settings.”"},
+      {id:"s_sos", type:"text", chip:"input", ref:"emergency",
+        q:"How fast must an SOS alert reach someone?",
+        ask:"Set a target: within how many seconds should at least one responder be notified, and how often must that succeed?",
+        help:"“At least one contact notified within 30 seconds, and this should succeed at least 98% of the time.”"},
+      {id:"s_avail", type:"confirm", chip:"confirm", ref:"reliability",
+        q:"How reliable must the service be?",
+        found:"Our recommendation: the emergency (SOS) service should be available at least <b>99.9% of the time</b> — roughly no more than ~45 minutes of downtime a month.",
+        ask:"Confirm this target, or tell us your requirement.",
+        help:"“99.9% is right for the emergency features.” — or — “We need higher / lower because …”"},
+      {id:"s_reg", type:"text", chip:"input", ref:"legal",
+        q:"Data-protection rules in each country",
+        ask:"Which data-protection laws or donor requirements apply in the countries you operate in?",
+        help:"“GDPR applies in Poland, Romania and Estonia. In [country], [law/requirement] applies. Our main donor also requires …”"}
+    ]
+  },
+  {
+    id:"close", num:"6", title:"Concerns & sign-off",
+    blurb:"Last few. Your honest concerns help us plan, and we need to know who's approving this.",
+    items:[
+      {id:"c_use", type:"text", chip:"input", ref:"risk",
+        q:"Will people actually use it when they need help?",
+        ask:"What makes you confident users will choose SafeYou in a crisis — and what's your biggest doubt?",
+        help:"“We're confident because … Our biggest worry is that users may not open the app in time / may not trust it with sensitive data.”"},
+      {id:"c_easy", type:"text", chip:"input", ref:"risk",
+        q:"Can someone use it easily, even under stress?",
+        ask:"Any concerns about whether your users can use the app quickly and calmly in a difficult moment?",
+        help:"“Many users have low phone literacy, so the Help button must be reachable in one tap and work without reading instructions.”"},
+      {id:"c_other", type:"text", chip:"input", ref:"risk",
+        q:"Any practical, legal or funding concerns?",
+        ask:"Anything about budget, timelines, partners, or regulations we should factor in?",
+        help:"“Funding is confirmed through [date]. We must launch in [country] before [event]. Partner organizations need training before go-live.”"},
+      {id:"c_limits", type:"text", chip:"input", ref:"known issues",
+        q:"Things to be aware of",
+        found:"We already noted these to keep an eye on: the app can't send an SOS without internet (and doesn't hold it to send later); the chat runs on a single server today; there's no automatic break-alert system yet.",
+        ask:"Add anything else you already know users or staff struggle with.",
+        help:"“Users in rural areas often have no signal — offline alerts matter. Staff find the dashboard slow during busy periods.”", tall:true},
+      {id:"c_signoff", type:"text", chip:"input", ref:"approval",
+        q:"Who is approving this plan?",
+        ask:"List the people signing off and the date — usually a product/programme lead and a technical lead.",
+        help:"“Approved by [name, programme director] and [name, tech lead], on [date].”"}
+    ]
+  }
+];
+
+/* ---- a small note: purely technical items handled with the dev team (no client action) ---- */
+const TECH_NOTE = [
+  "How often the app refreshes forum view/comment counts behind the scenes.",
+  "Whether background tasks run on a queue (a performance detail, not user-facing).",
+  "Tidying up a duplicate version of the chat service that exists in the code."
+];
+
+/* ---------------- state ---------------- */
+const KEY="safeyou_workbook_v2";
+let store={};
+try{store=JSON.parse(localStorage.getItem(KEY)||"{}");}catch(e){store={};}
+const get=k=>store[k]??"";
+function set(k,v){store[k]=v;persist();}
+let saveTimer=null;
+function persist(){
+  try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}
+  const t=document.getElementById("savetag");t.classList.add("show");
+  clearTimeout(saveTimer);saveTimer=setTimeout(()=>t.classList.remove("show"),900);
+}
+
+/* ---------------- field registry ---------------- */
+const fields=[];
+function reg(key,secId,doneFn){fields.push({key,secId,done:doneFn});}
+
+const main=document.getElementById("main");
+const toc=document.getElementById("toc");
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+
+SECTIONS.forEach(sec=>{
+  const secEl=el("section","sec");secEl.id="sec-"+sec.id;
+  const head=el("div","sec-head");
+  head.appendChild(el("span","n",sec.num));
+  head.appendChild(el("h2",null,sec.title));
+  secEl.appendChild(head);
+  secEl.appendChild(el("p","sec-blurb",sec.blurb));
+
+  sec.items.forEach(it=>{
+    const card=el("div","card");card.id="card-"+it.id;
+    const top=el("div","card-top");
+    top.appendChild(el("div","q",it.q));
+    if(it.ref)top.appendChild(el("span","ref",it.ref));
+    const chipTxt={confirm:"Please confirm",input:"Your input",check:"Quick check",model:"Example"}[it.chip];
+    top.appendChild(el("span","chip "+it.chip,chipTxt));
+    card.appendChild(top);
+    if(it.found){
+      const f=el("div","found");
+      f.innerHTML='<span class="ttl">What we found</span>'+it.found;
+      card.appendChild(f);
+    }
+    if(it.ask)card.appendChild(el("div","ask",it.ask));
+    if(it.help){
+      const h=el("div","help");
+      h.innerHTML='<span class="ttl">Example answer:</span> '+it.help;
+      card.appendChild(h);
+    }
+    buildBody(card,sec,it);
+    secEl.appendChild(card);
+  });
+
+  /* technical-items note at end of section 2 */
+  if(sec.id==="checked"){
+    const tb=el("div","techbox");
+    let li=TECH_NOTE.map(t=>"<li>"+t+"</li>").join("");
+    tb.innerHTML='<p><b>You don’t need to answer these.</b> A few items from the review are purely technical — we’ll handle them directly with your tech team:</p><ul>'+li+'</ul>';
+    secEl.appendChild(tb);
+  }
+  main.appendChild(secEl);
+
+  const a=el("a");a.href="#sec-"+sec.id;a.dataset.sec=sec.id;
+  a.innerHTML='<span class="dot" data-secdot="'+sec.id+'"></span><span>'+sec.title+'</span><span class="frac" data-secfrac="'+sec.id+'"></span>';
+  toc.appendChild(a);
+});
+
+function buildBody(card,sec,it){
+  if(it.type==="text"||it.type==="feature"){
+    const isFeat=it.type==="feature";
+    const seed=isFeat?(it.seed||FEATURE_SEED):"";
+    const ta=el("textarea",(isFeat||it.tall)?"tall":"");
+    ta.placeholder=isFeat?"":"Type your answer here…";
+    const saved=get(it.id);
+    ta.value=saved!==""?saved:seed;
+    ta.addEventListener("input",()=>{set(it.id,ta.value);refresh();});
+    if(isFeat){
+      const det=el("details","more");
+      det.appendChild(el("summary",null,"Describe how this should work"));
+      det.appendChild(ta);
+      if(it.id==="f_sos")det.open=true;
+      card.appendChild(det);
+    }else card.appendChild(ta);
+    reg(it.id,sec.id,()=>{
+      const v=(store[it.id]??seed).trim();
+      return v.length>0 && v!==seed.trim();
+    });
+  }
+  else if(it.type==="confirm"){
+    const wrap=el("div","decide");
+    [["ok","Yes, that's right"],["fix","We'd like a change"]].forEach(([val,txt])=>{
+      const lab=el("label","opt");
+      const inp=document.createElement("input");
+      inp.type="radio";inp.name="r-"+it.id;inp.value=val;
+      if(get(it.id+"__d")===val){inp.checked=true;lab.classList.add("sel-"+val);}
+      inp.addEventListener("change",()=>{
+        set(it.id+"__d",val);
+        wrap.querySelectorAll(".opt").forEach(o=>o.classList.remove("sel-ok","sel-fix"));
+        lab.classList.add("sel-"+val);refresh();
+      });
+      lab.appendChild(inp);lab.appendChild(document.createTextNode(txt));
+      wrap.appendChild(lab);
+    });
+    card.appendChild(wrap);
+    const note=el("textarea");note.placeholder="If you'd like a change, tell us here (optional)";note.value=get(it.id+"__n");
+    note.addEventListener("input",()=>{set(it.id+"__n",note.value);});
+    card.appendChild(note);
+    reg(it.id,sec.id,()=>!!(store[it.id+"__d"]));
+  }
+  else if(it.type==="metrics"){
+    it.rows.forEach((row,i)=>{
+      const [name,desc]=row;
+      const r=el("div","metric-row");
+      const nm=el("div","mname");nm.innerHTML="<b>"+name+"</b><span>"+desc+"</span>";
+      r.appendChild(nm);
+      [["now","Where we are now","e.g. ~5,000"],["goal","Where we want to get to","e.g. 12,000"],["how","How we'll measure it","e.g. app analytics"]].forEach(([f,lbl,ph])=>{
+        const box=el("div");
+        box.appendChild(el("label","fl",lbl));
+        const inp=document.createElement("input");inp.type="text";
+        const key=it.id+"_"+i+"_"+f;inp.value=get(key);inp.placeholder=ph;
+        inp.addEventListener("input",()=>{set(key,inp.value);refresh();});
+        box.appendChild(inp);r.appendChild(box);
+      });
+      card.appendChild(r);
+      reg(it.id+"_"+i,sec.id,()=>["now","goal","how"].every(f=>(store[it.id+"_"+i+"_"+f]??"").trim().length>0));
+    });
+  }
+}
+
+/* ---------------- progress ---------------- */
+const miniFill=document.getElementById("miniFill"),miniPct=document.getElementById("miniPct");
+function refresh(){
+  const total=fields.length;let done=0;const bySec={};
+  SECTIONS.forEach(s=>bySec[s.id]={d:0,t:0});
+  fields.forEach(f=>{bySec[f.secId].t++;if(f.done()){done++;bySec[f.secId].d++;}});
+  const pct=total?Math.round(done/total*100):0;
+  miniFill.style.width=pct+"%";miniPct.textContent=pct+"%";
+  SECTIONS.forEach(s=>{
+    const o=bySec[s.id];
+    const fr=document.querySelector('[data-secfrac="'+s.id+'"]');
+    const dot=document.querySelector('[data-secdot="'+s.id+'"]');
+    if(fr)fr.textContent=o.d+"/"+o.t;
+    if(dot)dot.classList.toggle("done",o.d===o.t&&o.t>0);
+  });
+  document.querySelectorAll(".card").forEach(c=>{
+    const id=c.id.replace("card-","");
+    const fs=fields.filter(f=>f.key===id||f.key.startsWith(id+"_"));
+    if(fs.length)c.classList.toggle("done",fs.every(f=>f.done()));
+  });
+}
+
+/* ---------------- scrollspy ---------------- */
+const links=[...toc.querySelectorAll("a")];
+const secs=SECTIONS.map(s=>document.getElementById("sec-"+s.id));
+function spy(){
+  let cur=secs[0].id;
+  for(const s of secs){if(s.getBoundingClientRect().top<=120)cur=s.id;}
+  links.forEach(a=>a.classList.toggle("active","sec-"+a.dataset.sec===cur));
+}
+window.addEventListener("scroll",spy,{passive:true});
+
+/* ---------------- export ---------------- */
+function download(name,text,type){
+  const b=new Blob([text],{type});const u=URL.createObjectURL(b);
+  const a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();
+  a.remove();URL.revokeObjectURL(u);
+}
+function buildMarkdown(){
+  let out="# SafeYou — your answers\n\n";
+  const total=fields.length;let done=0;fields.forEach(f=>{if(f.done())done++;});
+  out+="_"+Math.round(done/total*100)+"% answered ("+done+" of "+total+" questions)._\n\n";
+  SECTIONS.forEach(sec=>{
+    out+="## "+sec.num+". "+sec.title+"\n\n";
+    sec.items.forEach(it=>{
+      out+="### "+it.q+"\n";
+      if(it.type==="confirm"){
+        const d=get(it.id+"__d");const n=get(it.id+"__n");
+        out+="- Answer: "+(d==="ok"?"Yes, that's right":d==="fix"?"We'd like a change":"_(not answered yet)_")+"\n";
+        if(n)out+="- Note: "+n+"\n";
+      }else if(it.type==="metrics"){
+        it.rows.forEach((row,i)=>{
+          const nw=get(it.id+"_"+i+"_now"),g=get(it.id+"_"+i+"_goal"),h=get(it.id+"_"+i+"_how");
+          out+="- **"+row[0]+"** — now: "+(nw||"_TBD_")+" · goal: "+(g||"_TBD_")+" · measured by: "+(h||"_TBD_")+"\n";
+        });
+      }else{
+        const v=get(it.id);out+=(v.trim()?v:"_(not answered yet)_")+"\n";
+      }
+      out+="\n";
+    });
+  });
+  return out;
+}
+document.getElementById("btnMd").addEventListener("click",()=>download("SafeYou_answers.md",buildMarkdown(),"text/markdown"));
+document.getElementById("btnReset").addEventListener("click",()=>{
+  if(confirm("Clear all your answers and start over? This can't be undone."))
+  {store={};localStorage.removeItem(KEY);location.reload();}
+});
+
+refresh();spy();
+</script>
+
+</body>
+</html>
