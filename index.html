@@ -162,19 +162,19 @@
     <div class="minibar"><i id="miniFill"></i></div>
     <span class="minipct" id="miniPct">0%</span>
     <button class="btn btn-ghost" id="btnReset">Start over</button>
-    <button class="btn btn-primary" id="btnMd">Send us your answers</button>
+    <button class="btn btn-primary" id="btnMd">⬇ Download my answers</button>
   </div>
 </div>
 
 <header class="hero">
   <div class="hero-wrap">
     <h1>A few questions to finish the SafeYou plan.</h1>
-    <p>We reviewed SafeYou and have some things to check with you. <b>Most are quick</b> — for many we already looked at how your app works today and just need a <b>yes / no</b>. A few need your input as the people who know your users and programme best. <b>Every question has an example</b> so you can see the kind of answer we're looking for. Your answers save automatically in this browser; when you're done, click <b>“Send us your answers.”</b></p>
+    <p>We reviewed SafeYou and have some things to check with you. <b>Most are quick</b> — for many we already looked at how your app works today and just need a <b>yes / no</b>. A few need your input as the people who know your users and programme best. <b>Every question has an example</b> so you can see the kind of answer we're looking for. Your answers save automatically in this browser; when you're done, click <b>“Download my answers”</b> — it saves a file you can send back to us.</p>
     <div class="how">
       <span><b>1</b> Read what we found</span>
       <span><b>2</b> Confirm it, or tell us what to change</span>
       <span><b>3</b> Use the example to shape your answer</span>
-      <span><b>4</b> Click “Send us your answers”</span>
+      <span><b>4</b> Download your answers &amp; send us the file</span>
     </div>
     <div class="legend">
       <span><i style="background:#0E8A6F"></i>We checked — please confirm</span>
@@ -233,9 +233,8 @@ const SECTIONS = [
         help:"“Out of scope: the public marketing website; the separate online safety-checker tool; the survey-building tool, which is managed separately.”"},
       {id:"roles", type:"text", chip:"input", ref:"users",
         q:"Confirm the types of users and what each one can do",
-        found:"The plan lists 7 user types; the app today has 6. One type in the plan — “Contributor” — doesn't currently exist.",
-        ask:"Confirm the final list of user types, and in one line each, what they're allowed to do. Tell us whether “Contributor” should exist.",
-        help:"“End user: uses the app, raises alerts, joins forums. Consultant: answers users. Organization: receives alerts. Moderator: reviews content. Administrator: manages one country. Super administrator: full access including personal data. Drop ‘Contributor’.”", tall:true}
+        ask:"List your user types and, in one line each, what they're allowed to do.",
+        help:"“End user: uses the app, raises alerts, joins forums. Consultant: answers users. Organization: receives alerts. Moderator: reviews content. Administrator: manages one country. Super administrator: full access including personal data.”", tall:true}
     ]
   },
   {
@@ -259,8 +258,8 @@ const SECTIONS = [
         help:"“Move recordings and photos to secure cloud storage.” — or — “Keep as-is for now.”"},
       {id:"monitoring", type:"confirm", chip:"confirm", ref:"reliability",
         q:"Automatic alerts when something breaks",
-        found:"Right now there's <b>no system that automatically warns your team when something fails</b> — which is risky for the emergency (SOS) features especially.",
-        ask:"Should we add automatic monitoring so failures are caught immediately? (We recommend yes.)",
+        found:"Right now there isn't a system that automatically warns your team when something fails — this matters most for the emergency (SOS) features.",
+        ask:"Would you like us to add automatic monitoring so failures are caught immediately? (We'd suggest yes.)",
         help:"“Yes — add monitoring; the emergency path must never fail silently.” — or — “Not a priority for this phase.”"}
     ]
   },
@@ -363,8 +362,8 @@ const SECTIONS = [
         help:"“Funding is confirmed through [date]. We must launch in [country] before [event]. Partner organizations need training before go-live.”"},
       {id:"c_limits", type:"text", chip:"input", ref:"known issues",
         q:"Things to be aware of",
-        found:"We already noted these to keep an eye on: the app can't send an SOS without internet (and doesn't hold it to send later); the chat runs on a single server today; there's no automatic break-alert system yet.",
-        ask:"Add anything else you already know users or staff struggle with.",
+        found:"One thing we already noted: the app can't send an SOS without an internet connection (and doesn't hold it to send later).",
+        ask:"Add anything else you already know users or staff find tricky.",
         help:"“Users in rural areas often have no signal — offline alerts matter. Staff find the dashboard slow during busy periods.”", tall:true},
       {id:"c_signoff", type:"text", chip:"input", ref:"approval",
         q:"Who is approving this plan?",
@@ -376,9 +375,7 @@ const SECTIONS = [
 
 /* ---- a small note: purely technical items handled with the dev team (no client action) ---- */
 const TECH_NOTE = [
-  "How often the app refreshes forum view/comment counts behind the scenes.",
-  "Whether background tasks run on a queue (a performance detail, not user-facing).",
-  "Tidying up a duplicate version of the chat service that exists in the code."
+  "A few behind-the-scenes technical details (performance and how background processing runs) — we'll sort these out directly with your tech team."
 ];
 
 /* ---------------- state ---------------- */
